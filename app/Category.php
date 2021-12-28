@@ -17,8 +17,15 @@ class Category extends Model
      */
     protected $fillable = ['name'];
 
+    /**
+     * The accessors to append to the model's array form.
+     *
+     * @var array
+     */
+    protected $appends = ['category_name'];
+
     public function getCategoryNameAttribute()
     {
-        return Str::of(str_replace('_',' ',$this->name))->upper();
+        return strtoupper(str_replace('_',' ',$this->name));
     }
 }

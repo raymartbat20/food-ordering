@@ -14,9 +14,10 @@
     </head>
     <body class="h-screen">
         @include('components.header')
-        <div class="container mt-5 mx-auto w-screen flex justify-center">
+        <div id="app" class="container mt-5 mx-auto w-screen flex justify-center">
             @yield('content')
         </div>
         @yield('scripts')
+        <script src="{{config('app.env') === 'local' ? asset('js/app.js') : secure_asset('js/app.js') }}"></script>
     </body>
 </html>
