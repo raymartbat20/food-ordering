@@ -5,6 +5,18 @@ use Illuminate\Database\Seeder;
 
 class MenuSeeder extends Seeder
 {
+
+    protected $burger_category_id;
+    protected $drinks_category_id;
+    protected $combo_meals_category_id;
+
+    public function __construct()
+    {
+        $this->burger_category_id = Category::where('name','burgers')->first()->pluck('id');
+        $this->drinks_category_id = Category::where('name','drinks')->first()->pluck('id');
+        $this->combo_meals_category_id = Category::where('name','combo_meals')->first()->pluck('id');
+
+    }
     const BURGER_MENU = [
         [
             'name' => 'Jollibee Burger',
@@ -101,9 +113,22 @@ class MenuSeeder extends Seeder
     public function run()
     {
         foreach(self::CATEGORIES as $category){
+            switch ($category){
+                case 'BURGER_MENU':
+                    $category_id = $this->burger_category_id;
+                    break;
+                
+                case 'DRINKS_MENU':
+                    $category_id = $this->drinks_category_id;
+                    break;
+
+                case 'COMBO_MEALS_MENU':
+                    $category_id = $this->combo_meals_category_id;
+                    break;
+            }
             foreach($category as $menu){
                 DB::table('menus')->insert([
-                    'category_id' => $menu['category_id'],
+                    'category_id' => $category_id,
                     'name' => $menu['name'],
                     'price' => $menu['price'],
                     'tax' => $menu['tax'],
