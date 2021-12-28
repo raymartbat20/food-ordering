@@ -12,9 +12,9 @@ class MenuSeeder extends Seeder
 
     public function __construct()
     {
-        $this->burger_category_id = Category::where('name','burgers')->first()->pluck('id');
-        $this->drinks_category_id = Category::where('name','drinks')->first()->pluck('id');
-        $this->combo_meals_category_id = Category::where('name','combo_meals')->first()->pluck('id');
+        $this->burger_category_id = Category::where('name','burgers')->pluck('id')->first();
+        $this->drinks_category_id = Category::where('name','drinks')->pluck('id')->first();
+        $this->combo_meals_category_id = Category::where('name','combo_meals')->pluck('id')->first();
 
     }
     const BURGER_MENU = [
@@ -100,9 +100,18 @@ class MenuSeeder extends Seeder
     ];
 
     const CATEGORIES = [
-        self::BURGER_MENU,
-        self::DRINKS_MENU,
-        self::COMBO_MEALS_MENU
+        [
+            'name' => 'BURGER_MENU',
+            'menu' => self::BURGER_MENU
+        ],
+        [
+            'name' => 'DRINKS_MENU',
+            'menu' => self::DRINKS_MENU
+        ],
+        [
+            'name' => 'COMBO_MEALS_MENU',
+            'menu' => self::COMBO_MEALS_MENU
+        ],
     ];
 
     /**
@@ -113,7 +122,7 @@ class MenuSeeder extends Seeder
     public function run()
     {
         foreach(self::CATEGORIES as $category){
-            switch ($category){
+            switch ($category['name']){
                 case 'BURGER_MENU':
                     $category_id = $this->burger_category_id;
                     break;
@@ -126,7 +135,7 @@ class MenuSeeder extends Seeder
                     $category_id = $this->combo_meals_category_id;
                     break;
             }
-            foreach($category as $menu){
+            foreach($category['menu'] as $menu){
                 DB::table('menus')->insert([
                     'category_id' => $category_id,
                     'name' => $menu['name'],
