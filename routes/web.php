@@ -16,3 +16,6 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('main');
 });
+
+Route::get('category-menu','OrderController@category_menu')->name('order.category.menu');
+Route::resource('order','OrderController');

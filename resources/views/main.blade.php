@@ -8,13 +8,15 @@
 
         <!-- Fonts -->
         <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@200;600&display=swap" rel="stylesheet">
-        <link href="{{ secure_asset('css/app.css') }}" rel="stylesheet">
+        <link href="{{ asset('css/app.css') }}" rel="stylesheet">
         <!-- Styles -->
         @yield('styles')
     </head>
-    <body>
+    <body class="h-screen">
         @include('components.header')
-        @yield('content')
+        <div class="container mt-5 mx-auto w-screen flex justify-center">
+            @yield('content')
+        </div>
         @yield('scripts')
     </body>
 </html>
