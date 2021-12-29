@@ -5,7 +5,7 @@
                 <a href="{{ route('order.index') }}" class="relative block py-6 px-2 lg:p-6 text-sm lg:text-base font-bold">Order</a>
             </li>
             <li class="hover:bg-blue-800 hover:text-white">
-                <a href="#" class="relative block py-6 px-2 lg:p-6 text-sm lg:text-base font-bold">Reports</a>
+                <a href="{{ route('order.lists') }}" class="relative block py-6 px-2 lg:p-6 text-sm lg:text-base font-bold">OrderList</a>
             </li>
         </ul>
     </div>

@@ -17,5 +17,7 @@ Route::get('/', function () {
     return view('main');
 });
 
-Route::get('category-menu','OrderController@category_menu')->name('order.category.menu');
+Route::post('order/checkout','OrderController@checkout');
+Route::get('order/lists','OrderController@lists')->name('order.lists');
 Route::resource('order','OrderController');
+Route::post('check-coupon','CouponController@search');

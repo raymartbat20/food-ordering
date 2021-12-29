@@ -28,4 +28,14 @@ class Category extends Model
     {
         return strtoupper(str_replace('_',' ',$this->name));
     }
+
+    /**
+     * Relationship for menus
+     * 
+     * @return Collection
+     */
+    public function menus()
+    {
+        return $this->hasMany(Menu::class,'category_id','id');
+    }
 }

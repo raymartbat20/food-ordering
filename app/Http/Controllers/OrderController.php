@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Menu;
+use App\Order;
 use App\Category;
+use App\OrderDetails;
 use Illuminate\Http\Request;
+use App\Http\Requests\CheckoutRequest;
 
 class OrderController extends Controller
 {
@@ -15,31 +17,23 @@ class OrderController extends Controller
      */
     public function index()
     {
-        $data['categories'] = Category::all();
+        $data['categories'] = Category::with(['menus'])->get();
 
         return view('order.index',$data);
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
+     * Order Lists
+     * 
+     * @return View
      */
-    public function create()
+    public function lists()
     {
-        //
+        $data['orders'] = Order::latest()->get();
+
+        return view('order.lists',$data);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
 
     /**
      * Display the specified resource.
@@ -49,54 +43,45 @@ class OrderController extends Controller
      */
     public function show($id)
     {
-        //
+        $data['order'] = Order::with([
+            'order_details',
+            'order_details.menu'
+        ])->find($id);
+        if($data['order']){
+            return view('order.show',$data);
+        } else {
+            return redirect()->route('order.index')->with('error', 'No order found');
+        }
     }
 
     /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
-    }
-
-    /**
-     * Show the menu of the selected category
+     * Checkout
      * 
      * @param Request $request
-     * 
-     * @return View
+     * @return Response
      */
-    public function category_menu(Request $request)
+    public function checkout(CheckoutRequest $request)
     {
-        $data['menus'] = Menu::select(['name','category_id','price','tax'])->where('category_id',$request->query('category_id'))->get();
-        dd($data['menus']);
-        return view('order.menus',$data);
+        $new_order = new Order;
+        $new_order->customer_name = $request->get('customer_name');
+        $new_order->coupon_used = $request->get('coupon_used');
+        $new_order->payment = $request->get('amount_tendered');
+        $new_order->total = $request->get('total_price');
+        $new_order->tax = $request->get('tax');
+        $new_order->total_items = $request->get('total_items');
+        $new_order->change = $request->get('change');
+        $new_order->save();
+        
+        foreach(json_decode($request->orders) as $order)
+        {
+            $order_detail = new OrderDetails(['order_id' => $new_order->id,'menu_id' => $order->id, 'qty' => $order->qty]);
+            $order_detail->save();
+        }
+
+        return response()->json([
+            "status" => true,
+            "order_id" => $new_order->id,
+            "message" => "success",
+        ]);
     }
 }
